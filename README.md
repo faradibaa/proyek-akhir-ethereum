@@ -12,14 +12,6 @@ Masih on-going.
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
 ## Install library
 Instal vue
 ```
@@ -33,3 +25,13 @@ Instal Web3
 ```
 npm install web3
 ```
+
+## Menjalankan program
+```
+npm run serve
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
