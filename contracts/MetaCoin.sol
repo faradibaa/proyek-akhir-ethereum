@@ -9,13 +9,17 @@ import "./ConvertLib.sol";
 // coin/token contracts.
 
 contract MetaCoin {
+	address payable public owner;
 	mapping (address => uint) balances;
 
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
 	constructor() {
+		//owner = payable(msg.sender);
 		balances[tx.origin] = 10000;
 	}
+
+	//receive() external payable {}
 
 	function sendCoin(address receiver, uint amount) public returns(bool sufficient) {
 		if (balances[msg.sender] < amount) return false;
@@ -29,7 +33,15 @@ contract MetaCoin {
 		return ConvertLib.convert(getBalance(addr),2);
 	}
 
+	function getBalanceWalletInEth(address addr) public view returns(uint){
+		return ConvertLib.convert(getBalanceWallet(addr),2);
+	}
+
 	function getBalance(address addr) public view returns(uint) {
 		return balances[addr];
+	}
+
+	function getBalanceWallet(address addr) public view returns(uint) { // mendapatkan info saldo yang sama seperti di ganache
+		return addr.balance;
 	}
 }
