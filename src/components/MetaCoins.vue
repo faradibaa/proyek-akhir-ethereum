@@ -2,11 +2,6 @@
   <div id="content">
     <h2>Dompet KamuBisa</h2>
     <p>Dengan fitur Dompet KamuBisa, kirim donasi jadi lebih mudah! <br><br><br></p>
-
-    <!--Connect MetaMask-->
-    <p>Konek dulu ke MetaMask, ya!</p>
-    <button v-if="!connected" @click="connectWallet" class="connecting">Connect to MetaMask</button>
-    <p>Connecting: {{connected}} <br><br></p>
     
     <!-- Send Coin -->
     <div class="send-coin">
@@ -22,11 +17,11 @@
     <!-- Cek Saldo -->
     <div class="get-balance">
       <p><br>Pencet tombol di bawah ini jika ingin mengecek saldo kamu.</p>
+      <input v-model="addr" type="text" placeholder="Masukkan address dompetmu" class="wallet-address">
       <button @click="getCoinInformation" class="bid-button"> Cek Saldo </button>
-      <p> Saldo sekarang: {{ myCoin }}</p>
+      <p> Saldo sekarang: {{ myCoin }} ETH </p>
     </div>
 
-    <p> Tes, tes {{ trySeeingResult }}</p>
   </div>
 </template>
 
@@ -49,24 +44,13 @@ export default {
   data() {
     return {
       connected: false,
-      coins: '',
       myCoin: 0,
-      myAddrs: '0x2a705f636bF49A9B62756Ac1e193124dAE8A7003',
+      myAddrs: '',
       amount_of_sending: 0,
-      trySeeingResult: '',
       receiverAddress: '',
     }
   },
   methods: {
-    // connect ke akun MetaMask (untuk orang yang mau melakukan bidding)
-    connectWallet() {
-      if(window.ethereum) {
-        window.ethereum.request({ method: 'eth_requestAccounts' })
-          .then(() => {
-            this.connected = true;
-          });
-      }
-    },
     // memanggil fungsi dalam smart contract(?)
     async getCoinInformation() {
       const web3 = new Web3(window.ethereum);
@@ -76,8 +60,10 @@ export default {
 
       let contract = new web3.eth.Contract(abi, contractAddress);
 
+      this.myAddrs = this.addr;
+
       const result = await contract.methods.getBalance(this.myAddrs).call({from: contractAddress});
-      this.trySeeingResult = result + " " + typeof(result);
+      this.myCoin = result;
     },
     //
     sendCoinsAmount() {
