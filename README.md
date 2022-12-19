@@ -1,9 +1,11 @@
 # Catatan
 ## Progres & Kendala
 ### Progres
-Bisa panggil fungsi smart contract di Vue.
+- Bisa panggil fungsi smart contract di Vue.
+- Bisa mengecek balance berdasarkan address yang diinputkan
+- Sedang mencoba agar bisa transfer dari satu account ke account lain
 ### Kendala
-Sedang coba mengecek balance, tapi balance yang ditunjukkan di **Ganache/MetaMask** dan balance yang ditunjukkan **ketika memanggil fungsi di truffle console**, berbeda.
+- 
 
 ## Tools yang perlu diinstal
 - Node.js
