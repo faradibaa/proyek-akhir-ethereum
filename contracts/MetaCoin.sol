@@ -29,7 +29,7 @@ contract MetaCoin {
 	}
 
 	function getBalanceInEth(address addr) public view returns(uint){
-		return ConvertLib.convert(getBalance(addr),2);
+		return ConvertLib.convertWeiToEth(getBalance(addr));
 	}
 
 	function getBalance(address addr) public view returns(uint) { // mendapatkan info saldo yang sama seperti di ganache
