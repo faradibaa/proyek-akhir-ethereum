@@ -8,4 +8,9 @@ library ConvertLib{
 	{
 		return amount * conversionRate;
 	}
+
+	function convertWeiToEth(uint amount) public pure returns (uint convertedAmount)
+	{
+		return amount / 1000000000000000000;
+	}
 }
