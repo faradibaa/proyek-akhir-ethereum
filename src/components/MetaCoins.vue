@@ -62,7 +62,7 @@ export default {
 
       this.myAddrs = this.addr;
 
-      const result = await contract.methods.getBalance(this.myAddrs).call({from: contractAddress});
+      const result = await contract.methods.getBalanceInEth(this.myAddrs).call({from: contractAddress});
       this.myCoin = result;
     },
     //
