@@ -2,10 +2,9 @@
 ## Progres & Kendala
 ### Progres
 - Bisa panggil fungsi smart contract di Vue.
-- Bisa mengecek balance berdasarkan address yang diinputkan
-- Sedang mencoba agar bisa transfer dari satu account ke account lain
+- Bisa mengecek balance berdasarkan address yang diinputkan.
 ### Kendala
-- 
+- Tidak bisa transfer dari sembarang address, harus dari address yang sedang terhubung. https://ethereum.stackexchange.com/questions/3649/how-to-transfer-ether-between-accounts-in-solidity
 
 ## Tools yang perlu diinstal
 - Node.js
