@@ -49,6 +49,8 @@
       data-bs-toggle="collapse">
       Jadi donatur!
     </button> -->
+    <!-- <hr style="border-color: #198754; height: 1px;"> -->
+    <hr style="border-color: inherit;">
     <br>
     <!-- <div class="collapse py-2" id="collapseTarget">
       This is the toggle-able content!
