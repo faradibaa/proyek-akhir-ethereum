@@ -1,12 +1,13 @@
 <template>
   <br>
-  <div class="card" style="
+  <div class="card"
+              style="
               width: 500px;
               height: 600px;
               /* background-color: blue; */
 
               padding: 10px;
-              box-shadow: 10px;
+              border: 2px solid #198754;
 
               position:absolute;
               top:50%;
@@ -15,46 +16,80 @@
               margin-top:-300px;/* half height*/
               " id="content">
     <!-- <center> -->
-    <button class="btn" 
-      data-bs-target="#collapseTarget" 
-      data-bs-toggle="collapse"><h2><font-awesome-icon class="text-success" icon="fa-solid fa-wallet" /> Dompet KamuBisa</h2></button>
-    <p><center>Dengan fitur Dompet KamuBisa, kirim donasi jadi lebih mudah!</center></p>
+      <div>
+        <div style="float: left;
+                    width: 70%;
+                    height: 100%;">
+          <h2><center><font-awesome-icon class="text-success" icon="fa-solid fa-wallet" /> Dompet <span class="text-success">Kamu</span>Bisa</center></h2>
+          <p><center>Dengan fitur <font-awesome-icon class="text-success" icon="fa-solid fa-wallet" /> Dompet <span class="text-success">Kamu</span>Bisa,<br> kirim donasi jadi lebih mudah!</center></p>
+        </div>
+        <div v-if="!target_amount_fulfilled" class="card" style=" float: right;
+                                  width: 30%;
+                                  height: 80%;
+                                  border: 1px solid #198754;
+
+                                  "><h1><center>{{ total_donation }} ETH</center></h1>
+                                  <!-- <hr style="line-height: 1px;"> -->
+                                  <p><center>Target: 100 ETH</center></p>
+        </div>
+        <div v-else class="card" style=" float: right;
+                                  width: 30%;
+                                  height: 80%;
+                                  border: 1px solid #198754;
+                                  
+                                  "><h4><center>Target terpenuhi!</center></h4>
+                                  <!-- <hr style="line-height: 1px;"> -->
+                                  <p><center>{{ total_donation }}/100 ETH</center></p>
+        </div>
+      </div>
     
     <!-- <button 
-      class="btn btn-primary" 
+      class="btn btn-success" 
       data-bs-target="#collapseTarget" 
       data-bs-toggle="collapse">
-      Bootstrap collapse
-    </button>
-    <div class="collapse py-2" id="collapseTarget">
+      Jadi donatur!
+    </button> -->
+    <br>
+    <!-- <div class="collapse py-2" id="collapseTarget">
       This is the toggle-able content!
     </div> -->
 
-    <div class="collapse py-2" id="collapseTarget">
+    <!-- <div class="collapse py-2" id="collapseTarget"> -->
+    <!-- <button @click="target_amount_fulfilled = !target_amount_fulfilled">Toggle</button> -->
+    <div v-if="!target_amount_fulfilled">
       <!-- Send Coin -->
       <div>
         <!-- <p>Address</p> -->
         <center>
-          <input v-model="addr" type="text" placeholder="Masukkan address dompetmu" class="wallet-address card" style="padding: 10px"/><br>
+          <input v-model="addr" type="text" placeholder="Masukkan address dompetmu" class="wallet-address card" style=" padding: 10px;
+                                                                                                                        border: 1px solid #198754;"/><br>
       </center>
       </div>
+      <!-- Cek Saldo -->
+      <div class="get-balance">
+        <p style="line-height: 70%">Tekan tombol di bawah ini jika ingin mengecek saldo kamu.</p>
+        <button @click="getCoinInformation" class="btn btn-success"> Cek Saldo </button>
+        <p> Saldo sekarang: {{ myCoin }} ETH </p>
+      </div>
+      <br><br>
       <div class="send-coin">
-        <p>Silakan isi kotak di bawah ini jika ingin mengirim donasi.</p>
-        <input v-model="coins" type="text" placeholder="Masukkan nominal donasi" class="form-donasi card" style="padding: 10px;">
+        <p style="line-height: 70%">Silakan isi kotak di bawah ini jika ingin mengirim donasi.</p>
+        <input v-model="coins" type="text" placeholder="Masukkan nominal donasi" class="form-donasi card" style=" padding: 10px;
+                                                                                                                  border: 1px solid #198754;">
         <button @click="sendCoinsAmount" class="btn btn-success"> Kirim Koin Donasi </button>
       </div>
 
       <div class="amount-of-sending">
-        <p> Jumlah uang yang didonasikan: {{ amount_of_sending}}<br></p>
+        <p> Jumlah uang yang didonasikan: {{ donate_amount}}</p>
       </div>
-    
-      <!-- Cek Saldo -->
-      <div class="get-balance">
-        <p><br>Tekan tombol di bawah ini jika ingin mengecek saldo kamu.</p>
-        <button @click="getCoinInformation" class="btn btn-success"> Cek Saldo </button>
-        <p> Saldo sekarang: {{ myCoin }} ETH </p>
-      </div>
+      <br><br>
       <!-- </center> -->
+    </div>
+    <div v-else style="padding: 20px">
+      <h3 class="text-success" style="display: flex; justify-content: center;">
+        Mohon maaf, donasi kali ini sudah ditutup. <br>
+        Terimakasih kepada para donatur atas partisipasinya.
+      </h3>
     </div>
     </div>
 </template>
@@ -81,11 +116,12 @@ export default {
       connected: false,
       myCoin: 0,
       myAddrs: '',
-      amount_of_sending: 0,
+      donate_amount: 0,
       receiverAddress: '',
-      donate_amount: 0, 
       local_balance: 0,
       print_balance: 0,
+      total_donation: 0,
+      target_amount_fulfilled: false,
     }
   },
   methods: {
@@ -106,9 +142,15 @@ export default {
     },
     //
     sendCoinsAmount() {
-      this.amount_of_sending = this.coins;
       this.donate_amount = parseInt(this.coins);
-      this.local_balance = parseInt(this.local_balance) + parseInt(this.donate_amount);
+      if(this.donate_amount == this.donate_amount){
+        this.donate_amount = parseInt(this.coins);
+        this.local_balance = parseInt(this.local_balance) - parseInt(this.donate_amount);
+        this.total_donation = this.donate_amount + this.total_donation;
+        if(this.total_donation > 100 - 1){
+          this.target_amount_fulfilled = true;
+        }
+      }
     }
   }
 };
