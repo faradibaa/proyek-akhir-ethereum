@@ -16,7 +16,13 @@
               margin-top:-300px;/* half height*/
               " id="content">
     <!-- <center> -->
-      <div>
+      <div v-if="menu_collapse" style=" float: right;
+                                        width: 100%;
+                                        height: 100px;">
+        <h2><center><font-awesome-icon class="text-success" icon="fa-solid fa-wallet" /> Dompet <span class="text-success">Kamu</span>Bisa</center></h2>
+        <p><center>Dengan fitur <font-awesome-icon class="text-success" icon="fa-solid fa-wallet" /> Dompet <span class="text-success">Kamu</span>Bisa,<br> kirim donasi jadi lebih mudah!</center></p>
+      </div>
+      <div v-if="!menu_collapse">
         <div style="float: left;
                     width: 70%;
                     height: 100%;">
@@ -43,12 +49,7 @@
         </div>
       </div>
     
-    <!-- <button 
-      class="btn btn-success" 
-      data-bs-target="#collapseTarget" 
-      data-bs-toggle="collapse">
-      Jadi donatur!
-    </button> -->
+    
     <!-- <hr style="border-color: #198754; height: 1px;"> -->
     <hr style="border-color: inherit;">
     <br>
@@ -57,16 +58,36 @@
     </div> -->
 
     <!-- <div class="collapse py-2" id="collapseTarget"> -->
-    <!-- <button @click="target_amount_fulfilled = !target_amount_fulfilled">Toggle</button> -->
-    <div v-if="!target_amount_fulfilled">
       <!-- Send Coin -->
-      <div>
-        <!-- <p>Address</p> -->
-        <center>
-          <input v-model="addr" type="text" placeholder="Masukkan address dompetmu" class="wallet-address card" style=" padding: 10px;
-                                                                                                                        border: 1px solid #198754;"/><br>
-      </center>
-      </div>
+      <div v-if="!target_amount_fulfilled">
+        <!-- <button @click="target_amount_fulfilled = !target_amount_fulfilled">Toggle</button> -->
+        <div v-if="menu_collapse">
+          <center>
+            <div class="card" style=" width: 80%;
+                                      justify-content: center;
+                                      padding: 10px;
+                                      border: 1px solid #198754;">
+              <!-- <img src="./assets/logo.png"> -->
+              <img :src="require('../assets/background.jpg')"/>
+              <!-- test -->
+            </div>
+          </center>
+          <br>
+          <center><button @click="menu_collapse = !menu_collapse"
+            class="btn btn-success" 
+            data-bs-target="#collapseTarget" 
+            data-bs-toggle="collapse">
+            Jadi donatur!
+          </button></center>
+        </div>
+        <div class="collapse py-2" id="collapseTarget">
+        <div>
+          <!-- <p>Address</p> -->
+          <center>
+              <input v-model="addr" type="text" placeholder="Masukkan address dompetmu" class="wallet-address card" style=" padding: 10px;
+                                                                                                                            border: 1px solid #198754;"/><br>
+          </center>
+        </div>
       <!-- Cek Saldo -->
       <div class="get-balance">
         <p style="line-height: 70%">Tekan tombol di bawah ini jika ingin mengecek saldo kamu.</p>
@@ -86,6 +107,7 @@
       </div>
       <br><br>
       <!-- </center> -->
+    </div>
     </div>
     <div v-else style="padding: 20px">
       <h3 class="text-success" style="display: flex; justify-content: center;">
@@ -124,6 +146,7 @@ export default {
       print_balance: 0,
       total_donation: 0,
       target_amount_fulfilled: false,
+      menu_collapse: true,
     }
   },
   methods: {
