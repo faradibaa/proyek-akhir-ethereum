@@ -153,7 +153,7 @@ export default {
 
       // get accounts
       let accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
-      this.myAddrs = accounts[0]
+      this.myAddrs = accounts[0];
 
       // add campaign di sini aja
       /*await contract.methods.addFundraiseCampaign(
@@ -163,35 +163,70 @@ export default {
         this.fundImage
       ).sendTransaction({ from: contractAddress })*/
 
-      // donate
-      let campaignList = await contract.methods.getFundraises().call({from: contractAddress});
-      console.log(campaignList);
-      await contract.methods
-        .donate(campaignList[0]['id'], {from: accounts[1], value:web3.utils.toWei(this.donate_amount, 'ether')})
-        .sendTransaction({ from: contractAddress }); // donasi ke campaign ke-0
+      // donasi
+      //let campaignList = await contract.methods.getFundraises().call({from: contractAddress});
+      //console.log(campaignList);
+      // donasi ke campaign ke-0
+      /*await contract.methods
+        .donate(campaignList[0]['id'])
+        .send({from: accounts[0], value:web3.utils.toWei('5', 'ether')}); */
       
       // withdraw ke address ke-0
-      await contract.methods
-        .donate(campaignList[0]['id'])
-        .sendTransaction({ from: contractAddress });
+      //await contract.methods.withdraw(0).send();
       
       //
       const result = await contract.methods.getBalanceInEth(this.myAddrs).call({from: contractAddress});
-      let temp = parseInt(result) + parseInt(this.local_balance);
+      let temp = parseInt(result);
       this.myCoin = temp;
-    },
-    //
-    sendCoinsAmount() {
-      this.donate_amount = parseInt(this.coins);
+
+      const result2 = await contract.methods.getBalanceInEth('0x2a705f636bF49A9B62756Ac1e193124dAE8A7003').call({from: contractAddress});
+      let temp2 = parseInt(result2);
+
       if(this.donate_amount == this.donate_amount){
         this.donate_amount = parseInt(this.coins);
         this.local_balance = parseInt(this.local_balance) - parseInt(this.donate_amount);
-        this.total_donation = this.donate_amount + this.total_donation;
+        this.total_donation = temp2;
+        if(this.total_donation > 100 - 1){
+          this.target_amount_fulfilled = true;
+        }
+      }
+    },
+    //
+    async sendCoinsAmount() {
+      this.donate_amount = parseInt(this.coins);
+      
+
+      // donasi ke campaign ke-0
+      const web3 = new Web3(window.ethereum);
+      await window.ethereum.enable();
+      let abi = MetaCoin.abi; 
+      let contractAddress = MetaCoin.networks['5777'].address; // address dari deployed contract, bisa dilihat di ganache bagian Contracts
+      let contract = new web3.eth.Contract(abi, contractAddress);
+
+      // get accounts
+      let accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+      this.myAddrs = accounts[0];
+
+      // donasi
+      let campaignList = await contract.methods.getFundraises().call({from: contractAddress});
+      console.log(campaignList);
+      await contract.methods
+        .donate(campaignList[0]['id'])
+        .send({from: accounts[0], value:web3.utils.toWei(this.coins, 'ether')}); 
+
+      const result = await contract.methods.getBalanceInEth('0x2a705f636bF49A9B62756Ac1e193124dAE8A7003').call({from: contractAddress});
+      let temp = parseInt(result);
+
+      if(this.donate_amount == this.donate_amount){
+        this.donate_amount = parseInt(this.coins);
+        this.local_balance = parseInt(this.local_balance) - parseInt(this.donate_amount);
+        this.total_donation = temp;
         if(this.total_donation > 100 - 1){
           this.target_amount_fulfilled = true;
         }
       }
     }
+    
   }
 };
 </script>
