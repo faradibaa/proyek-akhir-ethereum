@@ -5,10 +5,8 @@
               width: 500px;
               height: 600px;
               /* background-color: blue; */
-
               padding: 10px;
               border: 2px solid #198754;
-
               position:absolute;
               top:50%;
               left:50%;
@@ -33,7 +31,6 @@
                                   width: 30%;
                                   height: 80%;
                                   border: 1px solid #198754;
-
                                   "><h1><center>{{ total_donation }} ETH</center></h1>
                                   <!-- <hr style="line-height: 1px;"> -->
                                   <p><center>Target: 100 ETH</center></p>
@@ -51,7 +48,7 @@
     
     
     <!-- <hr style="border-color: #198754; height: 1px;"> -->
-    <hr style="border-color: inherit;">
+    <hr>
     <br>
     <!-- <div class="collapse py-2" id="collapseTarget">
       This is the toggle-able content!
@@ -84,8 +81,8 @@
         <div>
           <!-- <p>Address</p> -->
           <center>
-              <input v-model="addr" type="text" placeholder="Masukkan address dompetmu" class="wallet-address card" style=" padding: 10px;
-                                                                                                                            border: 1px solid #198754;"/><br>
+              <!--<input v-model="addr" type="text" placeholder="Masukkan address dompetmu" class="wallet-address card" style=" padding: 10px;
+                                                                                                                            border: 1px solid #198754;"/><br>-->
           </center>
         </div>
       <!-- Cek Saldo -->
@@ -103,7 +100,7 @@
       </div>
 
       <div class="amount-of-sending">
-        <p> Jumlah uang yang didonasikan: {{ donate_amount}}</p>
+        <p> Jumlah uang yang didonasikan: {{ donate_amount }}</p>
       </div>
       <br><br>
       <!-- </center> -->
@@ -121,15 +118,7 @@
 <script>
 import Web3 from 'web3';
 import MetaCoin from '../../build/contracts/MetaCoin.json' // import file JSON untuk mengambil data ABI dan address
-
-/*const web3 = new Web3(window.ethereum);
-window.ethereum.enable();
-let abi = MetaCoin.abi; 
-let contractAddress = MetaCoin.networks['5777'].address; // address dari deployed contract, bisa dilihat di ganache bagian Contracts
-
-let contract = new web3.eth.Contract(abi, contractAddress);*/
-
-
+//const { ethereum } = window // https://stackoverflow.com/questions/58121048/metamask-web3-ethereum-not-defined
 export default {
   name: 'MetaCoins',
   props: {
@@ -147,6 +136,10 @@ export default {
       total_donation: 0,
       target_amount_fulfilled: false,
       menu_collapse: true,
+      fundDesc: 'penggalangan dana korban gempa',
+      fundGoal: 5,
+      fundName: 'penggalangan yayasan brawijaya',
+      fundImage: 'www.google.com',
     }
   },
   methods: {
@@ -156,11 +149,33 @@ export default {
       await window.ethereum.enable();
       let abi = MetaCoin.abi; 
       let contractAddress = MetaCoin.networks['5777'].address; // address dari deployed contract, bisa dilihat di ganache bagian Contracts
-
       let contract = new web3.eth.Contract(abi, contractAddress);
 
-      this.myAddrs = this.addr;
+      // get accounts
+      let accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+      this.myAddrs = accounts[0]
 
+      // add campaign di sini aja
+      /*await contract.methods.addFundraiseCampaign(
+        this.fundDesc,
+        this.fundGoal,
+        this.fundName,
+        this.fundImage
+      ).sendTransaction({ from: contractAddress })*/
+
+      // donate
+      let campaignList = await contract.methods.getFundraises().call({from: contractAddress});
+      console.log(campaignList);
+      await contract.methods
+        .donate(campaignList[0]['id'], {from: accounts[1], value:web3.utils.toWei(this.donate_amount, 'ether')})
+        .sendTransaction({ from: contractAddress }); // donasi ke campaign ke-0
+      
+      // withdraw ke address ke-0
+      await contract.methods
+        .donate(campaignList[0]['id'])
+        .sendTransaction({ from: contractAddress });
+      
+      //
       const result = await contract.methods.getBalanceInEth(this.myAddrs).call({from: contractAddress});
       let temp = parseInt(result) + parseInt(this.local_balance);
       this.myCoin = temp;
@@ -179,10 +194,8 @@ export default {
     }
   }
 };
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>
