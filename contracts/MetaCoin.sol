@@ -9,24 +9,67 @@ import "./ConvertLib.sol";
 // coin/token contracts.
 
 contract MetaCoin {
-	address payable public owner;
-	mapping (address => uint) balances;
+	//Menyimpan fundraise
+    FundraiseCampaign[] public fundraises;
+    //ID dengan nilai default nol
+    uint256 id = 0;
 
-	event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    struct FundraiseCampaign {
+        string description;
+        uint256 id;
+        uint256 goal;
+        uint256 current;
+        string name;
+        string imageUrl;
+        address payable owner;
+    }
 
-	constructor() {
-		owner = payable(msg.sender);
-	}
+    event FundraiseCampaignCreated (uint256 id);
 
-	receive() external payable {}
+    event DonateSuccessful (uint256 id);
 
-	function sendCoin(address receiver, uint amount) public returns(bool sufficient) {
-		if (balances[msg.sender] < amount) return false;
-		balances[msg.sender] -= amount;
-		balances[receiver] += amount;
-		emit Transfer(msg.sender, receiver, amount);
-		return true;
-	}
+    event WithdrawSuccessful (uint256 id);
+
+    function getFundraises() external view returns (FundraiseCampaign[] memory) {
+        return fundraises;
+    }
+
+    function addFundraiseCampaign(
+        string memory description,
+        uint goal,
+        string memory name,
+        string memory imageUrl
+    ) external {
+        uint256 newId = id + 1;
+        address payable owner = payable(msg.sender);
+
+        FundraiseCampaign memory newCampaign = FundraiseCampaign(description, id, goal, 0, name, imageUrl, owner);
+        fundraises.push(newCampaign);
+
+        id = newId;
+        emit FundraiseCampaignCreated(id);
+    }
+
+    //Donate uang ke fundraise ID
+    function donate(uint256 fundraiseId) external payable {
+        FundraiseCampaign storage fundraise = fundraises[fundraiseId];
+        fundraise.current += msg.value;
+        emit DonateSuccessful(fundraiseId);
+    }
+
+    //Withdraw yang hanya dapat dilakukan oleh owner (fundraiser)
+    function withdraw(uint256 fundraiseId) external {
+        FundraiseCampaign storage fundraise = fundraises[fundraiseId];
+        address payable owner = fundraise.owner;
+
+        require(owner == msg.sender, "Only owner can withdraw");
+
+        owner.transfer(fundraise.current);
+
+        fundraise.current = 0;
+
+        emit WithdrawSuccessful(fundraise.id);
+    }
 
 	function getBalanceInEth(address addr) public view returns(uint){
 		return ConvertLib.convertWeiToEth(getBalance(addr));
@@ -34,5 +77,9 @@ contract MetaCoin {
 
 	function getBalance(address addr) public view returns(uint) { // mendapatkan info saldo yang sama seperti di ganache
 		return addr.balance;
+	}
+
+	function getAddress() public view returns(address) {
+		return address(this);
 	}
 }
