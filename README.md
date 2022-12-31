@@ -1,10 +1,9 @@
 # Catatan
 ## Progres & Kendala
 ### Progres
-- Bisa panggil fungsi smart contract di Vue.
-- Bisa mengecek balance berdasarkan address yang diinputkan.
+- Selesai! Tinggal tambah fitur.
 ### Kendala
-- Tidak bisa transfer dari sembarang address, harus dari address yang sedang terhubung. https://ethereum.stackexchange.com/questions/3649/how-to-transfer-ether-between-accounts-in-solidity
+- 
 
 ## Tools yang perlu diinstal
 - Node.js
@@ -13,6 +12,7 @@
 - MetaMask (Chrome extension)
 
 ## Project setup
+Ketika pertama kali mendownload repository ini, masuk ke folder proyek lalu jalankan perintah berikut:
 ```
 npm install
 ```
@@ -35,8 +35,3 @@ npm install web3
 ```
 npm run serve
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-
